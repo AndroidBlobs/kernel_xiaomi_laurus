@@ -15,7 +15,7 @@ ifeq ($(call is-board-platform,msmnile),true)
 AUDIO_SELECT  := CONFIG_SND_SOC_SM8150=m
 endif
 
-ifeq ($(call is-board-platform-in-list,$(MSMSTEPPE) atoll),true)
+ifeq ($(call is-board-platform,$(MSMSTEPPE)),true)
 AUDIO_SELECT  := CONFIG_SND_SOC_SM6150=m
 endif
 
@@ -25,7 +25,7 @@ endif
 
 AUDIO_CHIPSET := audio
 # Build/Package only in case of supported target
-ifeq ($(call is-board-platform-in-list,msm8953 sdm845 sdm670 qcs605 msmnile atoll $(MSMSTEPPE) $(TRINKET)),true)
+ifeq ($(call is-board-platform-in-list,msm8953 sdm845 sdm670 qcs605 msmnile $(MSMSTEPPE) $(TRINKET)),true)
 
 LOCAL_PATH := $(call my-dir)
 
@@ -123,6 +123,15 @@ include $(DLKM_DIR)/AndroidKernelModule.mk
 include $(CLEAR_VARS)
 LOCAL_MODULE              := $(AUDIO_CHIPSET)_hdmi.ko
 LOCAL_MODULE_KBUILD_NAME  := hdmi_dlkm.ko
+LOCAL_MODULE_TAGS         := optional
+LOCAL_MODULE_DEBUG_ENABLE := true
+LOCAL_MODULE_PATH         := $(KERNEL_MODULES_OUT)
+include $(DLKM_DIR)/AndroidKernelModule.mk
+###########################################################
+###########################################################
+include $(CLEAR_VARS)
+LOCAL_MODULE              := $(AUDIO_CHIPSET)_max98937.ko
+LOCAL_MODULE_KBUILD_NAME  := max98937_dlkm.ko
 LOCAL_MODULE_TAGS         := optional
 LOCAL_MODULE_DEBUG_ENABLE := true
 LOCAL_MODULE_PATH         := $(KERNEL_MODULES_OUT)

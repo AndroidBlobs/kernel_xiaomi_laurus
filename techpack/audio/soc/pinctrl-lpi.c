@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -722,52 +723,52 @@ static int lpi_pinctrl_runtime_suspend(struct device *dev)
 	}
 	return 0;
 }
-
+//+EXTR 62092 zhangzhiqiang modify 20190510 adsp cannot sleep
 int lpi_pinctrl_suspend(struct device *dev)
 {
-	int ret = 0;
+   int ret = 0;
 
-	dev_dbg(dev, "%s: system suspend\n", __func__);
+   dev_dbg(dev, "%s: system suspend\n", __func__);
 
-	if ((!pm_runtime_enabled(dev) || !pm_runtime_suspended(dev))) {
-		ret = lpi_pinctrl_runtime_suspend(dev);
-		if (!ret) {
-			/*
-			 * Synchronize runtime-pm and system-pm states:
-			 * At this point, we are already suspended. If
-			 * runtime-pm still thinks its active, then
-			 * make sure its status is in sync with HW
-			 * status. The three below calls let the
-			 * runtime-pm know that we are suspended
-			 * already without re-invoking the suspend
-			 * callback
-			 */
-			pm_runtime_disable(dev);
-			pm_runtime_set_suspended(dev);
-			pm_runtime_enable(dev);
-		}
-	}
+   if ((!pm_runtime_enabled(dev) || !pm_runtime_suspended(dev))) {
+       ret = lpi_pinctrl_runtime_suspend(dev);
+       if (!ret) {
+           /*
+           * Synchronize runtime-pm and system-pm states:
+           * At this point, we are already suspended. If
+           * runtime-pm still thinks its active, then
+           * make sure its status is in sync with HW
+           * status. The three below calls let the
+           * runtime-pm know that we are suspended
+           * already without re-invoking the suspend
+           * callback
+           */
+           pm_runtime_disable(dev);
+           pm_runtime_set_suspended(dev);
+           pm_runtime_enable(dev);
+       }
+   }
 
-	return ret;
+   return ret;
 }
 
 int lpi_pinctrl_resume(struct device *dev)
 {
-	return 0;
+   return 0;
 }
 
 static const struct dev_pm_ops lpi_pinctrl_dev_pm_ops = {
-	SET_SYSTEM_SLEEP_PM_OPS(
-		lpi_pinctrl_suspend,
-		lpi_pinctrl_resume
-	)
+        SET_SYSTEM_SLEEP_PM_OPS(
+               lpi_pinctrl_suspend,
+               lpi_pinctrl_resume
+        )
 	SET_RUNTIME_PM_OPS(
 		lpi_pinctrl_runtime_suspend,
 		lpi_pinctrl_runtime_resume,
 		NULL
 	)
 };
-
+//-EXTR 62092 zhangzhiqiang modify 20190510 adsp cannot sleep
 static struct platform_driver lpi_pinctrl_driver = {
 	.driver = {
 		   .name = "qcom-lpi-pinctrl",
